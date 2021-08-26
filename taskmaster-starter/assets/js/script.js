@@ -13,6 +13,8 @@ var createTask = function(taskText, taskDate, taskList) {
   // append span and p element to parent li
   taskLi.append(taskSpan, taskP);
 
+  //check due date
+  auditTask(taskLi);
 
   // append to ul list on the page
   $("#list-" + taskList).append(taskLi);
@@ -205,12 +207,21 @@ $(".list-group").on("click", "span", function() {
     //swap out elements
     $(this).replaceWith(dateInput);
 
+    //enable jquery ui datepicker
+    dateInput.datepicker({
+      minDate: 1,
+      onClose: function() {
+        //when calendar is closed, force a "change" even on the 'dateInput'
+        $(this).trigger("change");
+      }
+    });
+
     //automatically focus on new element
     dateInput.trigger("focus");
 });
 
 //value of due date was changed
-$(".list-group").on("blur", "input[type='text']", function() {
+$(".list-group").on("change", "input[type='text']", function() {
   //get current text
   var date = $(this)
     .val();
@@ -239,6 +250,11 @@ $(".list-group").on("blur", "input[type='text']", function() {
   $(this).replaceWith(taskSpan);
 });
 
+var auditTask = function(taskEl) {
+  //ensure element is getting to the function
+  console.log(taskEl);
+};
+
 // remove all tasks
 $("#remove-tasks").on("click", function() {
   for (var key in tasks) {
@@ -250,3 +266,7 @@ $("#remove-tasks").on("click", function() {
 
 // load tasks for the first time
 loadTasks();
+
+$("#modalDueDate").datepicker({
+  minDate: 1
+});
